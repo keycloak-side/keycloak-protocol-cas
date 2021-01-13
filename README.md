@@ -7,7 +7,7 @@ now you can log out all users logged by by OIDC Protocol (backchannel).
 
 See [ServiceValidateEndpoint.successResponse](https://github.com/keycloak-side/keycloak-protocol-cas/blob/master/src/main/java/org/keycloak/protocol/cas/endpoints/ServiceValidateEndpoint.java)
 
-[x] 已经在 keycloak-10.0.2 下验证
+- [x] 已经在 keycloak-10.0.2 下验证
 
 ![keycloak01](./document/res/keycloak01.png)
 
