@@ -1,3 +1,17 @@
+Perfected SLO（Single Logout） based previous source. 
+You can log out all users authenticated by CAS Protocol before,
+now you can log out all users logged by by OIDC Protocol (backchannel).
+
+> 基于源项目，只添加了一行代码，完善了单点登出，之前只支持各个 CAS Client 之间通过 backchannel 的方式登出，
+现在可以在 CAS Client 和 OIDC Client 之间登出
+
+See [ServiceValidateEndpoint.successResponse](https://github.com/keycloak-side/keycloak-protocol-cas/blob/master/src/main/java/org/keycloak/protocol/cas/endpoints/ServiceValidateEndpoint.java)
+
+[x] 已经在 keycloak-10.0.2 下验证
+
+![keycloak01](./document/res/keycloak01.png)
+
+------------
 # keycloak-protocol-cas
 
 This plugin for Keycloak Identity and Access Management (http://www.keycloak.org) adds the CAS 3.0 SSO protocol

@@ -1,5 +1,10 @@
 package org.keycloak.protocol.cas.endpoints;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.cache.NoCache;
 import org.jboss.resteasy.spi.HttpRequest;
@@ -15,13 +20,8 @@ import org.keycloak.services.ErrorPage;
 import org.keycloak.services.managers.AuthenticationManager;
 import org.keycloak.services.messages.Messages;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
-
 public class LogoutEndpoint {
+
     private static final Logger logger = Logger.getLogger(LogoutEndpoint.class);
 
     @Context
@@ -36,10 +36,10 @@ public class LogoutEndpoint {
     @Context
     private HttpHeaders headers;
 
-    private RealmModel realm;
+    private RealmModel   realm;
     private EventBuilder event;
-    private ClientModel client;
-    private String redirectUri;
+    private ClientModel  client;
+    private String       redirectUri;
 
     public LogoutEndpoint(RealmModel realm, EventBuilder event) {
         this.realm = realm;
@@ -55,10 +55,14 @@ public class LogoutEndpoint {
         if (authResult != null) {
             UserSessionModel userSession = authResult.getSession();
             userSession.setNote(AuthenticationManager.KEYCLOAK_LOGOUT_PROTOCOL, CASLoginProtocol.LOGIN_PROTOCOL);
-            if (redirectUri != null) userSession.setNote(CASLoginProtocol.LOGOUT_REDIRECT_URI, redirectUri);
+            if (redirectUri != null) {
+                userSession.setNote(CASLoginProtocol.LOGOUT_REDIRECT_URI, redirectUri);
+            }
 
             logger.debug("Initiating CAS browser logout");
-            Response response =  AuthenticationManager.browserLogout(session, realm, authResult.getSession(), session.getContext().getUri(), clientConnection, headers, null);
+            // browserLogout 内部执行了 backchannelLogout
+            Response response = AuthenticationManager
+                .browserLogout(session, realm, authResult.getSession(), session.getContext().getUri(), clientConnection, headers, null);
             logger.debug("finishing CAS browser logout");
             return response;
         }
@@ -71,9 +75,9 @@ public class LogoutEndpoint {
         }
 
         client = realm.getClients().stream()
-                .filter(c -> CASLoginProtocol.LOGIN_PROTOCOL.equals(c.getProtocol()))
-                .filter(c -> RedirectUtils.verifyRedirectUri(session, service, c) != null)
-                .findFirst().orElse(null);
+            .filter(c -> CASLoginProtocol.LOGIN_PROTOCOL.equals(c.getProtocol()))
+            .filter(c -> RedirectUtils.verifyRedirectUri(session, service, c) != null)
+            .findFirst().orElse(null);
         if (client != null) {
             redirectUri = RedirectUtils.verifyRedirectUri(session, service, client);
 
